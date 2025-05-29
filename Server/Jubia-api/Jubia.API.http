@@ -23,4 +23,3 @@ GET https://localhost:5001/api/test
 GET https://localhost:5001/swagger/index.html
 
 
-GET https://localhost:5001/swagger/v1/swagger.json
