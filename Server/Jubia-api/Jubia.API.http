@@ -1,0 +1,26 @@
+@Jubia.API_HostAddress = https://localhost:5001
+
+### Get Weather Forecast
+GET {{Jubia.API_HostAddress}}/weatherforecast
+Accept: application/json
+
+### Test API
+GET {{Jubia.API_HostAddress}}/api/test
+
+### Access Swagger JSON
+GET {{Jubia.API_HostAddress}}/swagger/v1/swagger.json
+
+# @no-cookie-jar
+# @insecure
+
+
+GET https://localhost:5001/weatherforecast
+
+
+GET https://localhost:5001/api/test
+
+
+GET https://localhost:5001/swagger/index.html
+
+
+GET https://localhost:5001/swagger/v1/swagger.json
