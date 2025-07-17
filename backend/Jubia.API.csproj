@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <!-- Disable warnings as errors -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\**" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.16" />
+    
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.16" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    
+    <!-- Entity Framework Core with consistent versions -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    
+    <!-- Identity packages -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.16" />
+   
+    <!-- Removed invalid package reference -->
+    <!-- <PackageReference Include="Microsoft.AspNetCore.Identity" Version="8.0.16" /> -->
+  </ItemGroup>
+
+</Project>
