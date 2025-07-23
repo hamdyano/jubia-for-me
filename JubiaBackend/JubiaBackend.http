@@ -1,0 +1,17 @@
+@JubiaBackend_HostAddress = http://localhost:5178
+@JubiaBackend_HttpsAddress = https://localhost:7178
+
+### Get Weather Forecast
+GET {{JubiaBackend_HttpsAddress}}/weatherforecast
+Accept: application/json
+
+### Health Check
+GET {{JubiaBackend_HttpsAddress}}/health
+Accept: text/plain
+
+### Swagger JSON
+GET {{JubiaBackend_HttpsAddress}}/swagger/v1/swagger.json
+Accept: application/json
+
+### Access Swagger UI
+# Open in browser: {{JubiaBackend_HttpsAddress}}/swagger

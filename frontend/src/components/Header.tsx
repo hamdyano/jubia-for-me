@@ -29,6 +29,17 @@ const Header = () => {
             Sign In
           </Link>
         </span>
+
+
+         <span className="flex items-center space-x-4">
+          <Link
+            to="/register"
+            className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-orange-500 orange-100 hover:text-white transition duration-300 ease-in-out"
+          >
+            Sign Up
+          </Link>
+        </span>
+
       </div>
     </div>
   );
@@ -36,17 +47,3 @@ const Header = () => {
 
 export default Header;
 
-/*
-
-
-        <span className="flex items-center space-x-4">
-            <Link
-              to="/sign-in"
-              className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-gray-100"
-            >
-              Sign In
-            </Link>
-          
-        </span>
-
-        */
