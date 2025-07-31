@@ -1,313 +1,182 @@
-import { useState } from 'react';
-import { Eye, EyeOff, User, Mail, Phone, Lock, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { registerUser } from "@/api-client";
+import { useState } from "react";
+import { useToast } from "@/contexts/ToastProvider";
 
-export default function RegistrationForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    mobile: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+interface RegisterFormData {
+  name: string;
+  mobile: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
-  const [errors, setErrors] = useState({});
+export default function RegisterPage() {
+  const navigate = useNavigate();
+  const [, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+   const { showSuccess, } = useToast();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormData>();
+ // const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const validateForm = () => {
-    const newErrors = {};
+  // Update the onSubmit function
 
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
-    }
 
-    // Mobile validation
-    if (!formData.mobile.trim()) {
-      newErrors.mobile = 'Mobile number is required';
-    } else if (!/^01[0-2,5]{1}[0-9]{8}$/.test(formData.mobile)) {
-      newErrors.mobile = 'Please enter a valid Egyptian mobile number';
-    }
 
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, and number';
-    }
-
-    // Confirm password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    // Terms validation
-    if (!acceptTerms) {
-      newErrors.terms = 'You must accept the terms and conditions';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+// Add this inside the onSubmit function
+const onSubmit = async (data: RegisterFormData) => {
+  setIsLoading(true);
+  setError(null);
+  
+  try {
+    await registerUser(data);
+      showSuccess("Registration successful! Redirecting to login...");
     
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      // Replace with your actual API endpoint
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Registration successful:', result);
-        // Handle success (redirect, show success message, etc.)
-        alert('Registration successful!');
+    // Redirect to login page after success
+    setTimeout(() => {
+      navigate('/sign-in');
+    }, 2000);
+  } catch (err) {
+    // Handle specific error messages
+    let errorMessage = 'Registration failed';
+    if (err instanceof Error) {
+      errorMessage = err.message;
+      
+      // Handle specific backend errors
+      if (errorMessage.includes("Email already exists")) {
+        setError("This email is already registered");
+      } else if (errorMessage.includes("Passwords do not match")) {
+        setError("Passwords do not match");
       } else {
-        const errorData = await response.json();
-        console.error('Registration failed:', errorData);
-        // Handle server errors
-        if (errorData.errors) {
-          setErrors(errorData.errors);
-        } else {
-          alert('Registration failed. Please try again.');
-        }
+        setError(errorMessage);
       }
-    } catch (error) {
-      console.error('Network error:', error);
-      alert('Network error. Please check your connection and try again.');
-    } finally {
-      setIsLoading(false);
+    } else {
+      setError('An unknown error occurred');
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Register</h2>
-            <p className="text-gray-600">Create your account. It's free and only takes a minute.</p>
-          </div>
-
-          {/* Form */}
-          <div className="space-y-6">
-            {/* Name Field */}
+return (
+  <div className="flex justify-center items-center">
+      <Card className="bg-[#111827] w-full max-w-3xl p-6 rounded-2xl shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-white text-3xl">Create Account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Full Name"
-                  className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ${
-                    errors.name ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                />
-              </div>
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              <input
+                type="text"
+                placeholder="Name"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("name", { required: "Name is required" })}
+              />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
             </div>
-
-            {/* Mobile Field */}
+            
             <div>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  placeholder="Mobile Number (01XXXXXXXXX)"
-                  className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ${
-                    errors.mobile ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                />
-              </div>
-              {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
+              <input
+                type="text"
+                placeholder="Mobile"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("mobile", { 
+                  required: "Mobile is required",
+                  pattern: {
+                    value: /^[0-9]{10,15}$/,
+                    message: "Invalid mobile number"
+                  }
+                })}
+              />
+              {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile.message}</p>}
             </div>
-
-            {/* Email Field */}
+            
             <div>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Email Address"
-                  className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ${
-                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                />
-              </div>
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("email", { 
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
-
-            {/* Password Field */}
+            
             <div>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Password"
-                  className={`w-full pl-12 pr-12 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ${
-                    errors.password ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("password", { 
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters"
+                  }
+                })}
+              />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
-
-            {/* Confirm Password Field */}
+            
             <div>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  placeholder="Confirm Password"
-                  className={`w-full pl-12 pr-12 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ${
-                    errors.confirmPassword ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("confirmPassword", { 
+                  required: "Please confirm your password",
+                  validate: value => 
+                    value === watch('password') || "Passwords do not match"
+                })}
+              />
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
             </div>
-
-            {/* Terms Checkbox */}
-            <div>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <div className="relative flex-shrink-0 mt-1">
-                  <input
-                    type="checkbox"
-                    checked={acceptTerms}
-                    onChange={(e) => {
-                      setAcceptTerms(e.target.checked);
-                      if (errors.terms) {
-                        setErrors(prev => ({ ...prev, terms: '' }));
-                      }
-                    }}
-                    className="sr-only"
-                  />
-                  <div
-                    className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-all duration-200 ${
-                      acceptTerms
-                        ? 'bg-green-500 border-green-500'
-                        : errors.terms
-                        ? 'border-red-500'
-                        : 'border-gray-300'
-                    }`}
-                  >
-                    {acceptTerms && <Check className="w-3 h-3 text-white" />}
-                  </div>
-                </div>
-                <span className="text-sm text-gray-600 leading-relaxed">
-                  I accept the{' '}
-                  <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-                    Terms of Use
-                  </a>{' '}
-                  &{' '}
-                  <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-                    Privacy Policy
-                  </a>
-                </span>
-              </label>
-              {errors.terms && <p className="text-red-500 text-sm mt-1">{errors.terms}</p>}
-            </div>
-
-            {/* Submit Button */}
+            
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Creating Account...
-                </div>
-              ) : (
-                'Register Now'
-              )}
+              {isLoading ? "Registering..." : "Register"}
             </button>
+          </form>
+          
+          <div className="text-white mt-4 text-center text-sm">
+            Already have an account?{" "}
+            <Link to="/sign-in" className="underline text-blue-400">
+              Sign in
+            </Link>
           </div>
-
-          {/* Sign In Link */}
-          <div className="text-center mt-6">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <a href="#" className="text-green-600 hover:text-green-700 font-semibold transition-colors duration-200">
-                Sign in
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
+
+
+
+
+
+/*
+
+{error && (
+            <div className="mb-4 p-3 bg-red-500/20 text-red-500 rounded text-center">
+              {error}
+            </div>
+          )}
+
+          */
+
+
+

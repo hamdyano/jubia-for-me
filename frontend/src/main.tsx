@@ -1,10 +1,11 @@
 import React from "react";
-//import  StrictMode  from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./AppRoutes.tsx";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { AppContextProvider } from "./contexts/AppContext.tsx";
+
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { ToastProvider } from "./contexts/ToastProvider.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,10 +17,14 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+     <ToastProvider>
     <QueryClientProvider client={queryClient}>
-      <AppContextProvider>
+      
+        <AuthProvider>
         <App />
-      </AppContextProvider>
+        </AuthProvider>
+    
     </QueryClientProvider>
+    </ToastProvider>
   </React.StrictMode>
 );

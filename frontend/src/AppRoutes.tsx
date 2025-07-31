@@ -16,7 +16,7 @@ function App() {
           path="/"
           element={
             <Layout>
-              <p className="text-4xl font-bold text-center">Home page</p>
+              <p ></p>
             </Layout>
           }
         />

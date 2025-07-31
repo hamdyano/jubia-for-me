@@ -1,89 +1,118 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import * as apiClient from "../api-client";
-import { useAppContext } from "../contexts/AppContext";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { loginUser } from "@/api-client";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastProvider";
 
-export type SignInFormData = {
+
+interface LoginFormData {
   email: string;
   password: string;
-};
+}
 
-const SignIn = () => {
-  const { showToast } = useAppContext();
+export default function SignInPage() {
+  
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const [, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+   const { login } = useAuth();
+    const { showSuccess, showError } = useToast();
+  
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
 
-  const location = useLocation();
+  const onSubmit = async (data: LoginFormData) => {
+  setIsLoading(true);
+  setError(null);
+   try {
+       const response = await loginUser(data);
+      login(data.email, response.token);
+      
+    
+      showSuccess("Login successful! Redirecting to dashboard...");
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
+      showError(`Login failed: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<SignInFormData>();
-
-  const mutation = useMutation(apiClient.signIn, {
-    onSuccess: async () => {
-      showToast({ message: "Sign in Successful!", type: "SUCCESS" });
-      await queryClient.invalidateQueries("validateToken");
-      navigate(location.state?.from?.pathname || "/");
-    },
-    onError: (error: Error) => {
-      showToast({ message: error.message, type: "ERROR" });
-    },
-  });
-
-  const onSubmit = handleSubmit((data) => {
-    mutation.mutate(data);
-  });
 
   return (
-    <form className="flex flex-col gap-5" onSubmit={onSubmit}>
-      <h2 className="text-3xl font-bold">Sign In</h2>
-      <label className="text-gray-700 text-sm font-bold flex-1">
-        Email
-        <input
-          type="email"
-          className="border rounded w-full py-1 px-2 font-normal"
-          {...register("email", { required: "This field is required" })}
-        ></input>
-        {errors.email && (
-          <span className="text-red-500">{errors.email.message}</span>
-        )}
-      </label>
-      <label className="text-gray-700 text-sm font-bold flex-1">
-        Password
-        <input
-          type="password"
-          className="border rounded w-full py-1 px-2 font-normal"
-          {...register("password", {
-            required: "This field is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
-            },
-          })}
-        ></input>
-        {errors.password && (
-          <span className="text-red-500">{errors.password.message}</span>
-        )}
-      </label>
-      <span className="flex items-center justify-between">
-        <span className="text-sm">
-          Not Registered?{" "}
-          <Link className="underline" to="/register">
-            Create an account here
-          </Link>
-        </span>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl hover:bg-orange-500 orange-100 hover:text-white transition duration-300 ease-in-out"
-        >
-          Login
-        </button>
-      </span>
-    </form>
+    <div className="flex justify-center items-center">
+      <Card className="bg-[#111827] w-full max-w-3xl p-6 rounded-2xl shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-white text-3xl">Sign In</CardTitle>
+        </CardHeader>
+        <CardContent>
+          
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("email", { 
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            </div>
+            
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full border rounded px-3 py-2 bg-white text-black"
+                {...register("password", { 
+                  required: "Password is required"
+                })}
+              />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-500 text-white py-2 rounded            font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+          
+          <div className="mt-4 text-center text-sm text-white">
+            Don't have an account?{" "}
+            <Link to="/register" className="underline text-blue-400">
+              Register
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
+}
 
-export default SignIn;
+
+
+
+
+
+
+
+
+
+
+
+
+

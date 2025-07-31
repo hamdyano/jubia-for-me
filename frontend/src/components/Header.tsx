@@ -1,49 +1,88 @@
+import React from 'react';
 import { Link } from "react-router-dom";
-//import MobileNav from "./MobileNav";
-//import MainNav from "./MainNav";
-import transLogo from "../assets/transLogo.png";
+import transLogo from "@/assets/transLogo.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastProvider";
+import MobileMenuButton from './MobileMenuButton';
 
-const Header = () => {
+interface HeaderProps {
+  onMenuToggle?: () => void;
+  showSidebar?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuToggle, showSidebar = false }) => {
+  const { isAuthenticated, userEmail, logout } = useAuth();
+  const { showInfo } = useToast();
+
+  const handleLogout = () => {
+    logout();
+    showInfo("You have been logged out successfully");
+  };
+
   return (
-    <div className=" bg-[#111827] py-4 text-white rounded-b-3xl shadow-lg mb-8">
-      {/* Changed from "container" to "w-full" */}
-
+    <div className="bg-[#111827] py-4 text-white rounded-b-3xl shadow-lg mb-8">
       <div className="w-full flex justify-between items-center px-4 md:px-8">
-        {/* Logo Section */}
-        <Link
-          to="/"
-          className="flex flex-col items-center text-center lg:ml-38"
-        >
-          <img
-            src={transLogo}
-            alt="Logo"
-            className="h-28 w-auto md:h-36 lg:h-44 object-contain"
-          />
-        </Link>
-
-        <span className="flex items-center space-x-4">
+        {/* Left side - Mobile menu button (only shown when sidebar is enabled) and Logo */}
+        <div className="flex items-center space-x-4">
+          {showSidebar && onMenuToggle && (
+            <MobileMenuButton onClick={onMenuToggle} />
+          )}
+          
+          {/* Logo Section */}
           <Link
-            to="/sign-in"
-            className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-orange-500 orange-100 hover:text-white transition duration-300 ease-in-out"
+            to="/"
+            className={`flex flex-col items-center text-center ${
+              showSidebar ? 'lg:hidden' : 'lg:ml-38'
+            }`}
           >
-            Sign In
+            <img
+              src={transLogo}
+              alt="Logo"
+              className="h-28 w-auto md:h-36 lg:h-44 object-contain"
+            />
           </Link>
-        </span>
+        </div>
 
-
-         <span className="flex items-center space-x-4">
-          <Link
-            to="/register"
-            className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-orange-500 orange-100 hover:text-white transition duration-300 ease-in-out"
-          >
-            Sign Up
-          </Link>
-        </span>
-
+        {/* Right side - User authentication section */}
+        <div className="flex items-center space-x-4">
+          {isAuthenticated ? (
+            <>
+              <div className="flex items-center">
+                <span className="mr-2">Welcome,</span>
+                <span className="font-semibold truncate max-w-[120px] md:max-w-[200px]">
+                  {userEmail ? userEmail.split('@')[0] : ''}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/sign-in"
+                className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default Header;
+
+
 
