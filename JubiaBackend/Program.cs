@@ -6,7 +6,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Cors;
+using JubiaBackend.Repositories;  
+using Microsoft.AspNetCore.Diagnostics; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,33 +17,30 @@ builder.Configuration.AddJsonFile("appsettings.json");
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add CORS policy
-builder.Services.AddCors(options => 
-{
-    options.AddPolicy("ProductionPolicy", policy =>
-    {
-        policy.WithOrigins("https://cp1.jubia.net") // Your frontend URL
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
-var app = builder.Build();
-
-app.UseCors("ProductionPolicy"); // Apply CORS middleware
-
-// SQL Server configuration
+// SQL Server configuration - DO THIS ONLY ONCE
 builder.Services.AddDbContext<JubiaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Kestrel
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
-});
+// Register repository
+builder.Services.AddScoped<IMediaSettingsRepository, MediaSettingsRepository>();
 
 // AutoMapper setup
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder => builder
+            .WithOrigins(
+                "http://localhost:5173",   // Your React app's URL (HTTP)
+                "https://localhost:5173"   // In case you switch to HTTPS later
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
+ // policy.WithOrigins("https://cp1.jubia.net")
 
 // Add JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -126,12 +124,12 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 // CORS must come after UseRouting and before UseAuthentication
-app.UseCors("AllowReactApp");
+app.UseCors("AllowReactApp");  // Fixed policy name to match
 
 // Authentication & Authorization
-app.UseAuthentication(); // Add this - must come before Authorization
-app.UseAuthorization();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -139,5 +137,6 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.MapFallbackToFile("index.html");
+
 
 app.Run();

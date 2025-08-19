@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { 
@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Users,
   BarChart3} from "lucide-react";
+import { Link } from 'react-router-dom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,28 +26,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       title: "Dashboard",
       icon: LayoutDashboard,
       href: "/dashboard",
-      
+      as: Link,
     },
     {
       title: "Main Data",
       icon: Database,
       href: "/main-data",
-
+      as: Link,
     },
     {
       title: "Media Settings",
       icon: Settings,
-      href: "/media-settings"
+      href: "/media-settings",
+      as: Link,
     },
     {
       title: "Service Settings",
       icon: Settings,
-      href: "/service-settings"
+      href: "/service-settings",
+      as: Link,
     },
     {
       title: "General Settings",
       icon: Settings,
-      href: "/general-settings"
+      href: "/general-settings",
+      as: Link,
     }
   ];
 
@@ -86,13 +90,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     }
   ];
 
-  const handleItemClick = (href: string) => {
-    // Navigate to the route (you'll implement this with your router)
-    console.log(`Navigate to: ${href}`);
-    if (onClose) {
-      onClose();
-    }
-  };
 
   return (
     <>
@@ -115,15 +112,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <div className="px-3 space-y-1">
               {/* Main Menu Items */}
               {menuItems.map((item) => (
-                <Button
+                <Link
                   key={item.title}
-                  variant="ghost"
-                  className="w-full justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => handleItemClick(item.href)}
+                  to={item.href}
+                  className="w-full flex items-center justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out rounded"
+                  onClick={onClose}
                 >
                   <item.icon className="w-4 h-4 mr-3" />
                   <span className="flex-1 text-left">{item.title}</span>
-                </Button>
+                </Link>
               ))}
 
               <Separator className="my-4" />
@@ -135,30 +132,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </h3>
               </div>
               {productItems.map((item) => (
-                <Button
+                <Link
                   key={item.title}
-                  variant="ghost"
-                  className="w-full justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => handleItemClick(item.href)}
+                  to={item.href}
+                  className="w-full flex items-center justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out rounded"
+                  onClick={onClose}
                 >
                   <item.icon className="w-4 h-4 mr-3" />
                   <span className="flex-1 text-left">{item.title}</span>
-                </Button>
+                </Link>
               ))}
 
               <Separator className="my-4" />
 
               {/* Other Items */}
               {otherItems.map((item) => (
-                <Button
+                <Link
                   key={item.title}
-                  variant="ghost"
-                  className="w-full justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => handleItemClick(item.href)}
+                  to={item.href}
+                  className="w-full flex items-center justify-start h-10 px-3 text-white hover:bg-orange-700 hover:text-white transition duration-300 ease-in-out rounded"
+                  onClick={onClose}
                 >
                   <item.icon className="w-4 h-4 mr-3" />
                   <span className="flex-1 text-left">{item.title}</span>
-                </Button>
+                </Link>
               ))}
             </div>
           </ScrollArea>

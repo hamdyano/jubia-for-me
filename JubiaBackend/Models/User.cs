@@ -1,3 +1,5 @@
+using System;
+
 namespace JubiaBackend.Models
 {
     public class User
@@ -8,5 +10,11 @@ namespace JubiaBackend.Models
         public string Email { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
         public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+
+        // Actual registration time (UTC)
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Last successful sign in time (UTC)
+        public DateTime? LastLoginAt { get; set; }
     }
 }

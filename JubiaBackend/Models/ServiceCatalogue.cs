@@ -1,0 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
+public class ServiceCatalogue
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string EnglishName { get; set; }
+
+    [Required]
+    public string ArabicName { get; set; }
+
+    public int Sorting { get; set; }
+}

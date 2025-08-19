@@ -7,6 +7,11 @@ import {
 import Layout from "./layouts/Layout";
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
+import MediaSettings from "./pages/MediaSettings";
+import ServiceSettings from "./pages/ServiceSettings";
+import GeneralSettings from "./pages/GeneralSettings";
+import MediaManagement from "./pages/MediaManagement";
+import ProductManagement from "./pages/ProductManagement";
 
 function App() {
   return (
@@ -16,7 +21,7 @@ function App() {
           path="/"
           element={
             <Layout>
-              <p ></p>
+              <p></p>
             </Layout>
           }
         />
@@ -29,6 +34,52 @@ function App() {
             </Layout>
           }
         />
+
+        <Route
+          path="/media-settings"
+          element={
+            <Layout>
+              <MediaSettings />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/service-settings"
+          element={
+            <Layout>
+              <ServiceSettings />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/general-settings"
+          element={
+            <Layout>
+              <GeneralSettings />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/media-management"
+          element={
+            <Layout>
+              <MediaManagement />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/product-management"
+          element={
+            <Layout>
+              <ProductManagement />
+            </Layout>
+          }
+        />
+
         <Route
           path="/register"
           element={

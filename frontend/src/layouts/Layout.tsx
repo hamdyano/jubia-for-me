@@ -3,8 +3,9 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import newback from "@/assets/newback.jpg";
 
+
+import buildings from '@/assets/buildings.jpg';
 
 
 interface Props {
@@ -31,7 +32,7 @@ const LayoutWithSidebar = ({ children }: Props) => {
     <div 
       className="flex flex-col min-h-screen"
       style={{
-        backgroundImage: `url(${newback})`,
+        backgroundImage: `url(${buildings})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
