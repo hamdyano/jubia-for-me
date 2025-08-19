@@ -12,6 +12,7 @@ import ServiceSettings from "./pages/ServiceSettings";
 import GeneralSettings from "./pages/GeneralSettings";
 import MediaManagement from "./pages/MediaManagement";
 import ProductManagement from "./pages/ProductManagement";
+import UserSettings from "./pages/UserSettings";
 
 function App() {
   return (
@@ -79,6 +80,16 @@ function App() {
             </Layout>
           }
         />
+
+         <Route
+          path="/user-settings"
+          element={
+            <Layout>
+              <UserSettings />
+            </Layout>
+          }
+        />
+
 
         <Route
           path="/register"
