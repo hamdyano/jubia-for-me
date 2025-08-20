@@ -13,6 +13,7 @@ import GeneralSettings from "./pages/GeneralSettings";
 import MediaManagement from "./pages/MediaManagement";
 import ProductManagement from "./pages/ProductManagement";
 import UserSettings from "./pages/UserSettings";
+import ServiceManagement from "./pages/ServiceManagement";
 
 function App() {
   return (
@@ -68,6 +69,15 @@ function App() {
           element={
             <Layout>
               <MediaManagement />
+            </Layout>
+          }
+        />
+
+          <Route
+          path="/service-management"
+          element={
+            <Layout>
+              <ServiceManagement />
             </Layout>
           }
         />

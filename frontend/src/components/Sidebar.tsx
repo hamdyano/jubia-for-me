@@ -28,12 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: "/dashboard",
       as: Link,
     },
-    {
-      title: "Main Data",
-      icon: Database,
-      href: "/main-data",
-      as: Link,
-    },
+   
     {
       title: "Media Settings",
       icon: Settings,
