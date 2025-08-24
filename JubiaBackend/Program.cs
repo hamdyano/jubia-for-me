@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using JubiaBackend.Repositories;  
+//using JubiaBackend.Repositories;  
 using Microsoft.AspNetCore.Diagnostics; 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +22,7 @@ builder.Services.AddDbContext<JubiaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register repository
-builder.Services.AddScoped<IMediaSettingsRepository, MediaSettingsRepository>();
+//builder.Services.AddScoped<IMediaSettingsRepository, MediaSettingsRepository>();
 
 // AutoMapper setup
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

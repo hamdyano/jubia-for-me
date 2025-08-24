@@ -4,7 +4,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { 
   LayoutDashboard, 
-  Database, 
   Settings, 
   Image, 
   Wrench, 
@@ -30,19 +29,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     },
    
     {
-      title: "Media Settings",
+      title: " 1 - Media Settings",
       icon: Settings,
       href: "/media-settings",
       as: Link,
     },
     {
-      title: "Service Settings",
+      title: " 2 - Service Settings",
       icon: Settings,
       href: "/service-settings",
       as: Link,
     },
     {
-      title: "General Settings",
+      title: "3 - General Settings",
       icon: Settings,
       href: "/general-settings",
       as: Link,
@@ -51,17 +50,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const productItems = [
     {
-      title: "Media Management",
+      title: "4 - Media Management",
       icon: Image,
       href: "/media-management"
     },
     {
-      title: "Service Management",
+      title: "5 - Service Management",
       icon: Wrench,
       href: "/service-management"
     },
     {
-      title: "Product Management",
+      title: "6 - Product Management",
       icon: ShoppingCart,
       href: "/product-management"
     }
@@ -69,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const otherItems = [
     {
-      title: "User Settings",
+      title: "7 - User Settings",
       icon: Users,
       href: "/user-settings"
     },

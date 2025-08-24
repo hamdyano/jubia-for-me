@@ -4,6 +4,7 @@ using JubiaBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JubiaBackend.Migrations
 {
     [DbContext(typeof(JubiaDbContext))]
-    partial class JubiaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250824193036_mediatables")]
+    partial class mediatables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Brand");
+                    b.ToTable("Media_Brands");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Catalogue", b =>
@@ -67,7 +70,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Catalogue");
+                    b.ToTable("Media_Catalogues");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Color", b =>
@@ -91,7 +94,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Color");
+                    b.ToTable("Media_Colors");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Kind", b =>
@@ -115,7 +118,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Kind");
+                    b.ToTable("Media_Kinds");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_PackageUnit", b =>
@@ -139,7 +142,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_PackageUnit");
+                    b.ToTable("Media_PackageUnits");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Shape", b =>
@@ -163,7 +166,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Shape");
+                    b.ToTable("Media_Shapes");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Size", b =>
@@ -182,18 +185,12 @@ namespace JubiaBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Height")
-                        .HasColumnType("float");
-
                     b.Property<int>("Sorting")
                         .HasColumnType("int");
 
-                    b.Property<double>("Width")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Size");
+                    b.ToTable("Media_Sizes");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Surface", b =>
@@ -217,7 +214,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Surface");
+                    b.ToTable("Media_Surfaces");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Thickness", b =>
@@ -241,7 +238,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Thickness");
+                    b.ToTable("Media_Thicknesses");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_TradingUnit", b =>
@@ -265,7 +262,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_TradingUnit");
+                    b.ToTable("Media_TradingUnits");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.Media_Weight", b =>
@@ -289,7 +286,7 @@ namespace JubiaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Media_Weight");
+                    b.ToTable("Media_Weights");
                 });
 
             modelBuilder.Entity("JubiaBackend.Models.User", b =>

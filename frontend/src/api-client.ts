@@ -12,7 +12,7 @@ interface LoginData {
   email: string;
   password: string;
 }
-
+/*
 export interface MediaSetting {
   id: number;
   catalogue: string;
@@ -52,7 +52,7 @@ export const TABS = [
   { name: "Brand", endpoint: "Brands" },
   { name: "Trading Unit", endpoint: "TradingUnits" },
   { name: "Package Unit", endpoint: "PackageUnits" },
-];
+];*/
 
 // Add this function to handle CORS requests
 export const fetchWithCors = async (url: string, options: RequestInit = {}) => {
@@ -134,6 +134,8 @@ export const loginUser = async (data: LoginData) => {
 
 // ---------- NEW GENERIC CRUD FUNCTIONS FOR ALL TABS ----------
 
+/*
+
 // Fetch all rows for a given endpoint
 export async function fetchRows(endpoint: string): Promise<MediaSettingRow[]> {
   const res = await fetch(`${API_BASE_URL}/${endpoint}`);
@@ -168,4 +170,4 @@ export async function deleteRow(endpoint: string, id: number): Promise<void> {
     method: "DELETE"
   });
   if (!res.ok) throw new Error(`Failed to delete row in ${endpoint}`);
-}
+}*/

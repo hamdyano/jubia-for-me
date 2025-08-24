@@ -62,17 +62,18 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, showSidebar = false }) =>
             </>
           ) : (
             <>
+            
               <Link
                 to="/sign-in"
-                className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+              //  className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
               >
-                Sign In
+           
               </Link>
               <Link
                 to="/register"
-                className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
+              //  className="bg-white text-blue-600 px-3 py-1 font-bold hover:bg-orange-500 hover:text-white transition duration-300 ease-in-out rounded"
               >
-                Sign Up
+             
               </Link>
             </>
           )}

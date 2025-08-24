@@ -3,10 +3,7 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-
-
 import buildings from '@/assets/buildings.jpg';
-
 
 interface Props {
   children: React.ReactNode;
@@ -39,16 +36,17 @@ const LayoutWithSidebar = ({ children }: Props) => {
       }}
     >
       {/* Header - always visible */}
-      <Header onMenuToggle={isAuthenticated ? toggleSidebar : undefined} />
+      <Header onMenuToggle={toggleSidebar} />
       
       <div className="flex flex-1">
-        {/* Sidebar - only visible when authenticated */}
-        {isAuthenticated && (
-          <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-        )}
+        {/* Sidebar - always visible regardless of authentication status */}
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          onClose={closeSidebar} 
+        />
         
         {/* Main Content */}
-        <main className={`flex-1 ${isAuthenticated ? 'lg:ml-0' : ''}`}>
+        <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
           <div className="container mx-auto py-6 px-4 min-h-full">
             {children}
           </div>
@@ -62,12 +60,6 @@ const LayoutWithSidebar = ({ children }: Props) => {
 };
 
 export default LayoutWithSidebar;
-
-
-
-
-
-
 
 
 

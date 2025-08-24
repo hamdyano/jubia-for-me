@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Edit2, Trash2, Save, FileText, Settings, HelpCircle, Search } from 'lucide-react';
+import { X, Plus, Edit2, Trash2, Save, FileText, Settings, HelpCircle,  } from 'lucide-react';
 
 // Types
 interface ProductGroup {
@@ -1242,7 +1242,7 @@ const ProductManagement: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredServices.map((service, index) => (
+                  filteredServices.map((service, ) => (
                     <tr key={service.id} className="hover:bg-gray-50">
                       <td className="border border-gray-300 px-2 py-2">
                         <div className="flex gap-1">

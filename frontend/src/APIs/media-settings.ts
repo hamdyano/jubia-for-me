@@ -1,130 +1,77 @@
-/*const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export interface MediaSetting {
+// Tab config: maps tab names to backend endpoints and Size tab fields
+export const TABS = [
+  { name: "Catalogue", endpoint: "/media_catalogue" },
+  { name: "Kind", endpoint: "/media_kind" },
+  { name: "Size", endpoint: "/media_size", hasWidth: true, hasHeight: true },
+  { name: "Weight", endpoint: "/media_weight" },
+  { name: "Surface", endpoint: "/media_surface" },
+  { name: "Color", endpoint: "/media_color" },
+  { name: "Shape", endpoint: "/media_shape" },
+  { name: "Thickness", endpoint: "/media_thickness" },
+  { name: "Brand", endpoint: "/media_brand" },
+  { name: "Trading Unit", endpoint: "/media_tradingunit" },
+  { name: "Package Unit", endpoint: "/media_packageunit" },
+];
+
+// Main row interface (Width/Height only for Size tab)
+export interface MediaSettingRow {
   id: number;
-  catalogue: string;
-  kind: string;
-  size: string;
-  weight: string;
-  surface: string;
-  color: string;
-  shape: string;
-  thickness: string;
-  brand: string;
-  tradingUnit: string;
-  packageUnit: string;
   englishName: string;
   arabicName: string;
   sorting: number;
+  width?: number;
+  height?: number;
 }
 
-// Helper function to handle errors
+// Helper for error and JSON response handling
 const handleResponse = async (response: Response) => {
   const contentType = response.headers.get('content-type');
-  
-  // Debug logging
-  console.log('Response status:', response.status);
-  console.log('Response headers:', response.headers);
-  console.log('Content-Type:', contentType);
- // In handleResponse function
-if (!response.ok) {
-  let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-  
-  try {
-    if (contentType && contentType.includes('application/json')) {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } else {
-      const textResponse = await response.text();
-      console.log('Non-JSON error response:', textResponse.slice(0, 200));
-      
-      // Extract error from HTML if possible
-      const parser = new DOMParser();
-      const htmlDoc = parser.parseFromString(textResponse, 'text/html');
-      const errorElement = htmlDoc.querySelector('h1, title, .error');
-      if (errorElement) {
-        errorMessage = errorElement.textContent || errorMessage;
+  if (!response.ok) {
+    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+    try {
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
       } else {
-        errorMessage = `Server returned HTML. Status: ${response.status}`;
+        const text = await response.text();
+        errorMessage = text.slice(0, 200);
       }
-    }
-  } catch (parseError) {
-    console.error('Error parsing error response:', parseError);
+    } catch (_) {}
+    throw new Error(errorMessage);
   }
-  
-  throw new Error(errorMessage);
-}
-
-  // Check if response is JSON
   if (!contentType || !contentType.includes('application/json')) {
-    const text = await response.text();
-    console.error('Non-JSON response received:', text.slice(0, 200));
-    throw new Error(`Invalid content type. Expected JSON, received: ${contentType}`);
+    throw new Error(`Invalid response type: ${contentType}`);
   }
-
   return response.json();
 };
 
-export const fetchMediaSettings = async (): Promise<MediaSetting[]> => {
-  try {
-    // Debug the URL being called
-    const url = `${API_BASE_URL}/MediaSettings`;
-    console.log('Fetching from URL:', url);
-    console.log('API_BASE_URL:', API_BASE_URL);
-    
-    // Get auth token from storage
-    const token = localStorage.getItem('authToken');
-    console.log('Auth token exists:', !!token);
-    
-    const headers: HeadersInit = {
+// GET all rows for a tab
+export const fetchRows = async (endpoint: string): Promise<MediaSettingRow[]> => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const token = localStorage.getItem('authToken');
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    };
-    
-    // Only add Authorization header if token exists
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    
-    console.log('Request headers:', headers);
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers,
-      // Add these for CORS if needed
-      mode: 'cors',
-      credentials: 'include',
-    });
-
-    // Check for 401 Unauthorized
-    if (response.status === 401) {
-      console.log('Authentication failed, redirecting to signin');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userEmail');
-      window.location.href = '/signin';
-      throw new Error('Authentication required');
-    }
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('API Error in fetchMediaSettings:', error);
-    
-    // Re-throw with more context
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error('Failed to load media settings. Please try again.');
-    }
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    },
+    mode: 'cors',
+    credentials: 'include',
+  });
+  if (response.status === 401) {
+    localStorage.removeItem('authToken');
+    window.location.href = '/signin';
+    throw new Error('Authentication required');
   }
+  return handleResponse(response);
 };
 
-// Create new media setting
-export const createMediaSetting = async (data: Omit<MediaSetting, 'id'>): Promise<MediaSetting> => {
+// POST create a new row
+export const createRow = async (endpoint: string, data: Omit<MediaSettingRow, 'id'>): Promise<MediaSettingRow> => {
+  const url = `${API_BASE_URL}${endpoint}`;
   const token = localStorage.getItem('authToken');
-  const url = `${API_BASE_URL}/MediaSettings`;
-  
-  console.log('Creating media setting at URL:', url);
-  
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -136,22 +83,18 @@ export const createMediaSetting = async (data: Omit<MediaSetting, 'id'>): Promis
     mode: 'cors',
     credentials: 'include',
   });
-  
   if (response.status === 401) {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
     window.location.href = '/signin';
     throw new Error('Authentication required');
   }
-  
   return handleResponse(response);
 };
 
-// Update media setting
-export const updateMediaSetting = async (id: number, data: Partial<MediaSetting>): Promise<void> => {
+// PUT update a row
+export const updateRow = async (endpoint: string, id: number, data: Omit<MediaSettingRow, 'id'>): Promise<void> => {
+  const url = `${API_BASE_URL}${endpoint}/${id}`;
   const token = localStorage.getItem('authToken');
-  const url = `${API_BASE_URL}/MediaSettings/${id}`;
-  
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -163,22 +106,18 @@ export const updateMediaSetting = async (id: number, data: Partial<MediaSetting>
     mode: 'cors',
     credentials: 'include',
   });
-  
   if (response.status === 401) {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
     window.location.href = '/signin';
     throw new Error('Authentication required');
   }
-  
   await handleResponse(response);
 };
 
-// Delete media setting
-export const deleteMediaSetting = async (id: number): Promise<void> => {
+// DELETE a row
+export const deleteRow = async (endpoint: string, id: number): Promise<void> => {
+  const url = `${API_BASE_URL}${endpoint}/${id}`;
   const token = localStorage.getItem('authToken');
-  const url = `${API_BASE_URL}/MediaSettings/${id}`;
-  
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
@@ -188,43 +127,16 @@ export const deleteMediaSetting = async (id: number): Promise<void> => {
     mode: 'cors',
     credentials: 'include',
   });
-  
   if (response.status === 401) {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
     window.location.href = '/signin';
     throw new Error('Authentication required');
   }
-  
   await handleResponse(response);
 };
 
-// Reorder media settings
-export const reorderMediaSettings = async (sortOrders: Record<number, number>): Promise<void> => {
-  const token = localStorage.getItem('authToken');
-  const url = `${API_BASE_URL}/MediaSettings/reorder`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(sortOrders),
-    mode: 'cors',
-    credentials: 'include',
-  });
-  
-  if (response.status === 401) {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
-    window.location.href = '/signin';
-    throw new Error('Authentication required');
-  }
-  
-  await handleResponse(response);
-};
+
+
 
 
 /*
